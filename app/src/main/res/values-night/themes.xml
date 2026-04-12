@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.PupiloPlus" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">#AFC7B5</item>
+        <item name="colorPrimaryVariant">#89A38C</item>
+        <item name="colorOnPrimary">#FFFFFF</item>
+        <item name="android:statusBarColor">#24333E</item>
+        <item name="android:windowBackground">@color/darkBackground</item>
+        <item name="android:textColor">@color/darkText</item>
+    </style>
+</resources>

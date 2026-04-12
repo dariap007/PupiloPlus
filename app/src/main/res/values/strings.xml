@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">PupiloPlus</string>
+    <string-array name="pet_types">
+        <item>Кошка</item>
+        <item>Собака</item>
+        <item>Хомяк</item>
+        <item>Птица</item>
+        <item>Рыбка</item>
+        <item>Другое</item>
+    </string-array>
+    <string-array name="reminder_types">
+        <item>Кормление</item>
+        <item>Визит к врачу</item>
+        <item>Смена лотка</item>
+        <item>Лекарства</item>
+        <item>Смена воды</item>
+        <item>Другое</item>
+    </string-array>
+    <string-array name="weight_units">
+        <item>кг</item>
+        <item>г</item>
+        <item>фунты</item>
+    </string-array>
+    <string-array name="gender_options">
+        <item>Самец</item>
+        <item>Самка</item>
+    </string-array>
+    <string-array name="frequency_types">
+        <item>Однократно</item>
+        <item>Ежедневно</item>
+        <item>По дням недели</item>
+        <item>Раз в неделю</item>
+    </string-array>
+    <string-array name="days_of_week">
+        <item>Понедельник</item>
+        <item>Вторник</item>
+        <item>Среда</item>
+        <item>Четверг</item>
+        <item>Пятница</item>
+        <item>Суббота</item>
+        <item>Воскресенье</item>
+    </string-array>
+</resources>

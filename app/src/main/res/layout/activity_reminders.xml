@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/accent"
+        app:title="Напоминания"
+        app:titleTextColor="@color/white"
+        app:navigationIcon="@drawable/ic_back" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="8dp"
+            android:spacing="8dp">
+
+            <Button
+                android:id="@+id/button_add_reminder"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="+ Напоминание"
+                android:backgroundTint="@color/accent"
+                android:textColor="@color/white" />
+
+            <Button
+                android:id="@+id/button_filter_reminders"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Фильтр"
+                android:backgroundTint="@color/secondary"
+                android:textColor="@color/titleColor" />
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_reminders"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_marginTop="12dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:orientation="horizontal"
+        android:background="@color/navBackground"
+        android:spacing="0dp">
+
+        <Button
+            android:id="@+id/button_tab_home"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:text="Главная"
+            android:backgroundTint="@color/navBackground"
+            android:textColor="@color/titleColor"
+            android:layout_margin="2dp" />
+
+        <Button
+            android:id="@+id/button_tab_reminders"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:text="Напоминания"
+            android:backgroundTint="@color/primaryGreen"
+            android:textColor="@color/white"
+            android:layout_margin="2dp" />
+    </LinearLayout>
+</LinearLayout>
