@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/background">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/accent"
+        app:title="Добавление питомца"
+        app:titleTextColor="@color/white"
+        app:navigationIcon="@drawable/ic_back" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+        <!-- Photo section -->
+        <ImageView
+            android:id="@+id/image_pet_photo"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:src="@drawable/ic_pet"
+            android:scaleType="centerCrop"
+            android:background="@drawable/rounded_photo"
+            android:layout_marginBottom="8dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <Button
+                android:id="@+id/button_change_photo"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Изменить"
+                android:backgroundTint="@color/secondary"
+                android:textColor="@color/titleColor"
+                android:layout_marginEnd="4dp" />
+
+            <Button
+                android:id="@+id/button_delete_photo"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Удалить"
+                android:backgroundTint="#FF6B6B"
+                android:textColor="@color/white"
+                android:layout_marginStart="4dp" />
+        </LinearLayout>
+
+        <EditText
+            android:id="@+id/edit_pet_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Имя"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/edit_text_background"
+            android:textColor="@color/textColor"
+            android:textColorHint="@color/secondary" />
+
+        <Spinner
+            android:id="@+id/spinner_pet_type"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/edit_text_background" />
+
+        <EditText
+            android:id="@+id/edit_custom_type"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Укажите вид животного"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/edit_text_background"
+            android:textColor="@color/textColor"
+            android:textColorHint="@color/secondary"
+            android:visibility="gone" />
+
+        <Spinner
+            android:id="@+id/spinner_pet_gender"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/edit_text_background" />
+
+        <EditText
+            android:id="@+id/edit_pet_birthdate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Дата рождения (YYYY-MM-DD)"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/edit_text_background"
+            android:textColor="@color/textColor"
+            android:textColorHint="@color/secondary"
+            android:inputType="date" />
+
+        <EditText
+            android:id="@+id/edit_pet_breed"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Порода"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/edit_text_background"
+            android:textColor="@color/textColor"
+            android:textColorHint="@color/secondary" />
+
+        <EditText
+            android:id="@+id/edit_pet_color"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Окрас"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/edit_text_background"
+            android:textColor="@color/textColor"
+            android:textColorHint="@color/secondary" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="12dp">
+
+            <EditText
+                android:id="@+id/edit_pet_weight"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Вес"
+                android:background="@drawable/edit_text_background"
+                android:textColor="@color/textColor"
+                android:textColorHint="@color/secondary"
+                android:inputType="numberDecimal" />
+
+            <Spinner
+                android:id="@+id/spinner_weight_unit"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:layout_marginStart="8dp"
+                android:background="@drawable/edit_text_background"
+                android:textColor="@color/black" />
+        </LinearLayout>
+
+        <EditText
+            android:id="@+id/edit_pet_chip"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Чип (если есть)"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/edit_text_background"
+            android:textColor="@color/textColor"
+            android:textColorHint="@color/secondary" />
+
+        <EditText
+            android:id="@+id/edit_pet_food"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Корм"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/edit_text_background"
+            android:textColor="@color/textColor"
+            android:textColorHint="@color/secondary" />
+
+        <EditText
+            android:id="@+id/edit_pet_notes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Примечания"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/edit_text_background"
+            android:textColor="@color/textColor"
+            android:textColorHint="@color/secondary"
+            android:minLines="3" />
+
+        <Button
+            android:id="@+id/button_save_pet"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Сохранить"
+            android:backgroundTint="@color/accent"
+            android:textColor="@color/white"
+            android:layout_marginTop="18dp" />
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

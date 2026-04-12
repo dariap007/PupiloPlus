@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="8dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="PupiloPlus"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:textColor="@color/titleColor"
+            android:textStyle="bold"
+            android:gravity="center" />
+
+        <ImageButton
+            android:id="@+id/button_settings"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_settings"
+            android:backgroundTint="@color/accent"
+            android:background="@drawable/rounded_button"
+            android:contentDescription="Настройки" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="8dp">
+
+        <Button
+            android:id="@+id/button_prev_month"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="&lt;"
+            android:padding="8dp" />
+
+        <Button
+            android:id="@+id/button_today"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Сегодня"
+            android:padding="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp" />
+
+        <Button
+            android:id="@+id/button_next_month"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="&gt;"
+            android:padding="8dp" />
+    </LinearLayout>
+
+    <com.example.pupiloplus.ui.CustomCalendarView
+        android:id="@+id/calendar_view"
+        android:layout_width="match_parent"
+        android:layout_height="280dp"
+        android:layout_marginTop="8dp"
+        android:background="@color/navBackground" />
+
+    <TextView
+        android:id="@+id/text_calendar_hint"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Выберите дату" 
+        android:textColor="@color/textColor"
+        android:layout_marginTop="8dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginTop="16dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Ваши питомцы"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textColor="@color/titleColor" />
+
+        <ImageButton
+            android:id="@+id/button_add_pet"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_add"
+            android:backgroundTint="@color/accent"
+            android:background="@drawable/rounded_button"
+            android:contentDescription="Добавить питомца" />
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_pets"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1.5"
+        android:layout_marginTop="8dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:orientation="horizontal"
+        android:layout_marginTop="12dp"
+        android:background="@color/navBackground"
+        android:spacing="0dp">
+
+        <Button
+            android:id="@+id/button_tab_home"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:text="Главная"
+            android:backgroundTint="@color/primaryGreen"
+            android:textColor="@color/white"
+            android:layout_margin="2dp" />
+
+        <Button
+            android:id="@+id/button_tab_reminders"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:text="Напоминания"
+            android:backgroundTint="@color/navBackground"
+            android:textColor="@color/titleColor"
+            android:layout_margin="2dp" />
+    </LinearLayout>
+</LinearLayout>
