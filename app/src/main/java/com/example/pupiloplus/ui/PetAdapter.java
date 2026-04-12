@@ -3,6 +3,7 @@ package com.example.pupiloplus.ui;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -105,12 +106,18 @@ public class PetAdapter extends RecyclerView.Adapter<PetAdapter.PetViewHolder> {
         return type;
     }
 
-    private Bitmap loadBitmapFromInternalStorage(String filename) {
+    private Bitmap loadBitmapFromInternalStorage(String path) {
         try {
-            FileInputStream fis = context.openFileInput(filename);
-            Bitmap bitmap = BitmapFactory.decodeStream(fis);
-            fis.close();
-            return bitmap;
+            if (path.startsWith("content://")) {
+                // For URI paths, try MediaStore (though may fail after restart)
+                return MediaStore.Images.Media.getBitmap(context.getContentResolver(), android.net.Uri.parse(path));
+            } else {
+                // For internal file paths
+                FileInputStream fis = context.openFileInput(path);
+                Bitmap bitmap = BitmapFactory.decodeStream(fis);
+                fis.close();
+                return bitmap;
+            }
         } catch (Exception e) {
             e.printStackTrace();
             return null;

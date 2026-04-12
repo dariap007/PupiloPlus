@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -31,7 +32,7 @@ import java.util.Locale;
 public class AddPetActivity extends AppCompatActivity {
 
     private DatabaseHelper databaseHelper;
-    private EditText birthdateInput;
+    private Button birthdateButton;
     private Uri selectedPhotoUri = null;
     private String selectedPhotoPath = null;
     private Pet existingPet = null;
@@ -47,6 +48,8 @@ public class AddPetActivity extends AppCompatActivity {
                     try {
                         Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedPhotoUri);
                         petPhotoImageView.setImageBitmap(bitmap);
+                        selectedPhotoPath = saveBitmapToInternalStorage(bitmap);
+                        updatePhotoButtons();
                         Toast.makeText(this, "Фото выбрано", Toast.LENGTH_SHORT).show();
                     } catch (IOException e) {
                         Toast.makeText(this, "Ошибка загрузки фото", Toast.LENGTH_SHORT).show();
@@ -68,23 +71,14 @@ public class AddPetActivity extends AppCompatActivity {
         toolbar.setNavigationOnClickListener(v -> finish());
 
         databaseHelper = new DatabaseHelper(this);
-        birthdateInput = findViewById(R.id.edit_pet_birthdate);
+        birthdateButton = findViewById(R.id.button_birthdate);
         petPhotoImageView = findViewById(R.id.image_pet_photo);
         customTypeInput = findViewById(R.id.edit_custom_type);
 
-        // Check if editing existing pet
-        petId = getIntent().getLongExtra("petId", -1);
-        if (petId != -1 && getIntent().getBooleanExtra("edit", false)) {
-            existingPet = databaseHelper.getPetById(petId);
-            if (existingPet != null) {
-                loadPetData(existingPet);
-            }
-        }
-
         // Spinner для типа питомца
         Spinner typeSpinner = findViewById(R.id.spinner_pet_type);
-        ArrayAdapter<CharSequence> typeAdapter = ArrayAdapter.createFromResource(this, R.array.pet_types, android.R.layout.simple_spinner_item);
-        typeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        ArrayAdapter<CharSequence> typeAdapter = ArrayAdapter.createFromResource(this, R.array.pet_types, R.layout.spinner_item);
+        typeAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         typeSpinner.setAdapter(typeAdapter);
         typeSpinner.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
             @Override
@@ -105,20 +99,33 @@ public class AddPetActivity extends AppCompatActivity {
 
         // Spinner для пола
         Spinner genderSpinner = findViewById(R.id.spinner_pet_gender);
-        ArrayAdapter<CharSequence> genderAdapter = ArrayAdapter.createFromResource(this, R.array.gender_options, android.R.layout.simple_spinner_item);
-        genderAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        ArrayAdapter<CharSequence> genderAdapter = ArrayAdapter.createFromResource(this, R.array.gender_options, R.layout.spinner_item);
+        genderAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         genderSpinner.setAdapter(genderAdapter);
 
         // Spinner для единиц измерения веса
         Spinner weightUnitSpinner = findViewById(R.id.spinner_weight_unit);
-        ArrayAdapter<CharSequence> weightAdapter = ArrayAdapter.createFromResource(this, R.array.weight_units, android.R.layout.simple_spinner_item);
-        weightAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        ArrayAdapter<CharSequence> weightAdapter = ArrayAdapter.createFromResource(this, R.array.weight_units, R.layout.spinner_item);
+        weightAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         weightUnitSpinner.setAdapter(weightAdapter);
 
+        // Check if editing existing pet
+        petId = getIntent().getLongExtra("petId", -1);
+        if (petId != -1 && getIntent().getBooleanExtra("edit", false)) {
+            existingPet = databaseHelper.getPetById(petId);
+            if (existingPet != null) {
+                loadPetData(existingPet);
+                toolbar.setTitle("Редактирование питомца");
+            }
+        }
+
         // DatePicker для даты рождения
-        birthdateInput.setOnClickListener(v -> showDatePicker());
+        birthdateButton.setOnClickListener(v -> showDatePicker());
 
         // Photo buttons
+        Button addPhotoButton = findViewById(R.id.button_add_photo);
+        addPhotoButton.setOnClickListener(v -> pickPhoto());
+
         Button changePhotoButton = findViewById(R.id.button_change_photo);
         changePhotoButton.setOnClickListener(v -> pickPhoto());
 
@@ -127,6 +134,24 @@ public class AddPetActivity extends AppCompatActivity {
 
         Button saveButton = findViewById(R.id.button_save_pet);
         saveButton.setOnClickListener(v -> savePet());
+
+        updatePhotoButtons();
+    }
+
+    private void updatePhotoButtons() {
+        Button addPhotoButton = findViewById(R.id.button_add_photo);
+        Button changePhotoButton = findViewById(R.id.button_change_photo);
+        Button deletePhotoButton = findViewById(R.id.button_delete_photo);
+
+        if (selectedPhotoPath == null || selectedPhotoPath.isEmpty()) {
+            addPhotoButton.setVisibility(View.VISIBLE);
+            changePhotoButton.setVisibility(View.GONE);
+            deletePhotoButton.setVisibility(View.GONE);
+        } else {
+            addPhotoButton.setVisibility(View.GONE);
+            changePhotoButton.setVisibility(View.VISIBLE);
+            deletePhotoButton.setVisibility(View.VISIBLE);
+        }
     }
 
     private void loadPetData(Pet pet) {
@@ -145,7 +170,9 @@ public class AddPetActivity extends AppCompatActivity {
         Spinner weightUnitSpinner = findViewById(R.id.spinner_weight_unit);
 
         nameInput.setText(pet.getName());
-        birthdateInput.setText(pet.getBirthDate());
+        if (!pet.getBirthDate().isEmpty()) {
+            birthdateButton.setText(pet.getBirthDate());
+        }
         breedInput.setText(pet.getBreed());
         colorInput.setText(pet.getColor());
         chipInput.setText(pet.getChip());
@@ -166,26 +193,25 @@ public class AddPetActivity extends AppCompatActivity {
 
         // Load photo
         if (pet.getPhotoPath() != null && !pet.getPhotoPath().isEmpty()) {
-            try {
-                Uri photoUri = Uri.parse(pet.getPhotoPath());
-                Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), photoUri);
+            Bitmap bitmap = loadBitmapFromInternalStorage(pet.getPhotoPath());
+            if (bitmap != null) {
                 petPhotoImageView.setImageBitmap(bitmap);
-                selectedPhotoUri = photoUri;
-            } catch (IOException e) {
-                petPhotoImageView.setImageResource(pet.getPhotoRes());
+                selectedPhotoPath = pet.getPhotoPath();
+            } else {
+                petPhotoImageView.setImageResource(R.drawable.pet_care_18769509);
             }
         } else {
-            petPhotoImageView.setImageResource(pet.getPhotoRes());
+            petPhotoImageView.setImageResource(R.drawable.pet_care_18769509);
         }
+        updatePhotoButtons();
 
-        // Parse weight and unit
-        String[] weightParts = pet.getWeight().split(" ");
-        if (weightParts.length >= 1) {
-            weightInput.setText(weightParts[0]);
-        }
-        if (weightParts.length >= 2) {
-            ArrayAdapter<CharSequence> weightAdapter = (ArrayAdapter<CharSequence>) weightUnitSpinner.getAdapter();
-            int unitPosition = weightAdapter.getPosition(weightParts[1]);
+        // Set weight
+        weightInput.setText(pet.getWeight());
+
+        // Set weight unit spinner
+        if (pet.getWeightUnit() != null && !pet.getWeightUnit().isEmpty()) {
+            ArrayAdapter<CharSequence> weightUnitAdapter = (ArrayAdapter<CharSequence>) weightUnitSpinner.getAdapter();
+            int unitPosition = weightUnitAdapter.getPosition(pet.getWeightUnit());
             weightUnitSpinner.setSelection(unitPosition);
         }
     }
@@ -199,16 +225,25 @@ public class AddPetActivity extends AppCompatActivity {
     private void deletePhoto() {
         selectedPhotoUri = null;
         selectedPhotoPath = null;
-        petPhotoImageView.setImageResource(R.drawable.ic_pet);
+        petPhotoImageView.setImageResource(R.drawable.pet_care_18769509);
+        updatePhotoButtons();
         Toast.makeText(this, "Фото удалено", Toast.LENGTH_SHORT).show();
     }
 
     private void showDatePicker() {
         Calendar calendar = Calendar.getInstance();
+        Calendar today = Calendar.getInstance();
         DatePickerDialog datePickerDialog = new DatePickerDialog(this, (view, year, month, dayOfMonth) -> {
+            Calendar selected = Calendar.getInstance();
+            selected.set(year, month, dayOfMonth);
+            if (selected.after(today)) {
+                Toast.makeText(this, "Дата рождения не может быть в будущем", Toast.LENGTH_SHORT).show();
+                return;
+            }
             String date = String.format(Locale.US, "%04d-%02d-%02d", year, month + 1, dayOfMonth);
-            birthdateInput.setText(date);
+            birthdateButton.setText(date);
         }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
+        datePickerDialog.getDatePicker().setMaxDate(today.getTimeInMillis());
         datePickerDialog.show();
     }
 
@@ -243,15 +278,15 @@ public class AddPetActivity extends AppCompatActivity {
             pet.setType(selectedType);
         }
 
-        pet.setBirthDate(birthdateInput.getText().toString().trim());
+        pet.setBirthDate(birthdateButton.getText().toString().trim());
         pet.setBreed(breedInput.getText().toString().trim());
         pet.setColor(colorInput.getText().toString().trim());
-        String weight = weightInput.getText().toString().trim() + " " + weightUnitSpinner.getSelectedItem().toString();
-        pet.setWeight(weight);
+        pet.setWeight(weightInput.getText().toString().trim());
+        pet.setWeightUnit(weightUnitSpinner.getSelectedItem().toString());
         pet.setChip(chipInput.getText().toString().trim());
         pet.setFood(foodInput.getText().toString().trim());
         pet.setNotes(notesInput.getText().toString().trim());
-        pet.setPhotoRes(R.drawable.ic_pet);
+        pet.setPhotoRes(R.drawable.pet_care_18769509);
 
         // Set photo path
         if (selectedPhotoPath != null) {
@@ -260,7 +295,7 @@ public class AddPetActivity extends AppCompatActivity {
             pet.setPhotoPath(existingPet.getPhotoPath());
         }
 
-        if (pet.getName().isEmpty() || birthdateInput.getText().toString().isEmpty()) {
+        if (pet.getName().isEmpty() || birthdateButton.getText().toString().isEmpty()) {
             Toast.makeText(this, "Введите имя и дату рождения", Toast.LENGTH_SHORT).show();
             return;
         }

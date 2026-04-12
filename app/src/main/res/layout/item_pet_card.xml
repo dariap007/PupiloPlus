@@ -20,7 +20,7 @@
             android:id="@+id/image_pet"
             android:layout_width="72dp"
             android:layout_height="72dp"
-            android:src="@drawable/ic_pet"
+            android:src="@drawable/pet_care_18769509"
             android:scaleType="centerCrop"
             android:layout_marginEnd="12dp" />
 

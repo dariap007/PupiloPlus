@@ -33,4 +33,14 @@
     <style name="CalendarDate" parent="TextAppearance.MaterialComponents.Caption">
         <item name="android:textColor">@color/titleColor</item>
     </style>
+
+    <style name="SpinnerStyle" parent="Widget.AppCompat.Spinner">
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textColorHint">@color/black</item>
+    </style>
+
+    <style name="SpinnerDropDownStyle" parent="Widget.AppCompat.ListView.DropDown">
+        <item name="android:textColor">@color/black</item>
+        <item name="android:background">@color/white</item>
+    </style>
 </resources>

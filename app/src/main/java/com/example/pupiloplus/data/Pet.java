@@ -9,6 +9,7 @@ public class Pet {
     private String breed;
     private String color;
     private String weight;
+    private String weightUnit;
     private String chip;
     private String food;
     private String notes;
@@ -77,6 +78,14 @@ public class Pet {
 
     public void setWeight(String weight) {
         this.weight = weight;
+    }
+
+    public String getWeightUnit() {
+        return weightUnit;
+    }
+
+    public void setWeightUnit(String weightUnit) {
+        this.weightUnit = weightUnit;
     }
 
     public String getChip() {

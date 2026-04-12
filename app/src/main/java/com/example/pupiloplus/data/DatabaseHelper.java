@@ -11,7 +11,7 @@ import java.util.List;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "pupiloplus.db";
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 4;
 
     private static final String TABLE_PETS = "pets";
     private static final String TABLE_REMINDERS = "reminders";
@@ -22,16 +22,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("CREATE TABLE " + TABLE_PETS + " (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, type TEXT, gender TEXT, birthDate TEXT, breed TEXT, color TEXT, weight TEXT, chip TEXT, food TEXT, notes TEXT, photoRes INTEGER, photoPath TEXT)");
+        db.execSQL("CREATE TABLE " + TABLE_PETS + " (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, type TEXT, gender TEXT, birthDate TEXT, breed TEXT, color TEXT, weight TEXT, weightUnit TEXT, chip TEXT, food TEXT, notes TEXT, photoRes INTEGER, photoPath TEXT)");
         db.execSQL("CREATE TABLE " + TABLE_REMINDERS + " (id INTEGER PRIMARY KEY AUTOINCREMENT, petId INTEGER, title TEXT, type TEXT, dateTime TEXT, period TEXT, dose TEXT, extra TEXT, notes TEXT, imageRes INTEGER, notifyBefore TEXT)");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // For testing, drop and recreate tables
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_PETS);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_REMINDERS);
-        onCreate(db);
+        if (oldVersion < 4) {
+            // Add weightUnit column to existing pets table if not exists
+            db.execSQL("ALTER TABLE " + TABLE_PETS + " ADD COLUMN weightUnit TEXT DEFAULT 'кг'");
+        }
+        // Handle other upgrades if needed
     }
 
     public long insertPet(Pet pet) {
@@ -44,6 +45,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put("breed", pet.getBreed());
         values.put("color", pet.getColor());
         values.put("weight", pet.getWeight());
+        values.put("weightUnit", pet.getWeightUnit());
         values.put("chip", pet.getChip());
         values.put("food", pet.getFood());
         values.put("notes", pet.getNotes());
@@ -62,6 +64,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put("breed", pet.getBreed());
         values.put("color", pet.getColor());
         values.put("weight", pet.getWeight());
+        values.put("weightUnit", pet.getWeightUnit());
         values.put("chip", pet.getChip());
         values.put("food", pet.getFood());
         values.put("notes", pet.getNotes());
@@ -174,6 +177,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         pet.setBreed(cursor.getString(cursor.getColumnIndexOrThrow("breed")));
         pet.setColor(cursor.getString(cursor.getColumnIndexOrThrow("color")));
         pet.setWeight(cursor.getString(cursor.getColumnIndexOrThrow("weight")));
+        pet.setWeightUnit(cursor.getString(cursor.getColumnIndexOrThrow("weightUnit")));
         pet.setChip(cursor.getString(cursor.getColumnIndexOrThrow("chip")));
         pet.setFood(cursor.getString(cursor.getColumnIndexOrThrow("food")));
         pet.setNotes(cursor.getString(cursor.getColumnIndexOrThrow("notes")));

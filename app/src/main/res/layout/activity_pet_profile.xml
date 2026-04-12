@@ -28,10 +28,11 @@
 
             <ImageView
                 android:id="@+id/image_profile_pet"
-                android:layout_width="match_parent"
+                android:layout_width="300dp"
                 android:layout_height="300dp"
                 android:layout_marginTop="16dp"
-                android:src="@drawable/ic_pet"
+                android:layout_gravity="center"
+                android:src="@drawable/pet_care_18769509"
                 android:scaleType="centerCrop"
                 android:background="@drawable/rounded_photo" />
 
@@ -74,7 +75,23 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Вид: "
-                    android:textColor="@color/textColor"
+                    android:textColor="@color/black"
+                    android:layout_marginTop="8dp" />
+
+                <TextView
+                    android:id="@+id/text_profile_gender"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Пол: "
+                    android:textColor="@color/black"
+                    android:layout_marginTop="8dp" />
+
+                <TextView
+                    android:id="@+id/text_profile_birthdate"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Дата рождения: "
+                    android:textColor="@color/black"
                     android:layout_marginTop="8dp" />
 
                 <TextView
@@ -82,7 +99,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Порода: "
-                    android:textColor="@color/textColor"
+                    android:textColor="@color/black"
                     android:layout_marginTop="8dp" />
 
                 <TextView
@@ -90,7 +107,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Окрас: "
-                    android:textColor="@color/textColor"
+                    android:textColor="@color/black"
                     android:layout_marginTop="8dp" />
 
                 <TextView
@@ -98,7 +115,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Вес: "
-                    android:textColor="@color/textColor"
+                    android:textColor="@color/black"
                     android:layout_marginTop="8dp" />
 
                 <TextView
@@ -106,7 +123,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Чип: "
-                    android:textColor="@color/textColor"
+                    android:textColor="@color/black"
                     android:layout_marginTop="8dp" />
 
                 <TextView
@@ -114,7 +131,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Корм: "
-                    android:textColor="@color/textColor"
+                    android:textColor="@color/black"
                     android:layout_marginTop="8dp" />
             </LinearLayout>
 
@@ -157,7 +174,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Редактировать"
+            android:text="Изменить"
             android:backgroundTint="@color/accent"
             android:textColor="@color/white" />
 
@@ -168,6 +185,7 @@
             android:layout_weight="1"
             android:text="Удалить"
             android:backgroundTint="#FF6B6B"
-            android:textColor="@color/white" />
+            android:textColor="@color/white"
+            android:layout_marginStart="16dp" />
     </LinearLayout>
 </LinearLayout>

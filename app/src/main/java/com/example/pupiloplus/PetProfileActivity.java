@@ -52,6 +52,8 @@ public class PetProfileActivity extends AppCompatActivity {
         TextView name = findViewById(R.id.text_profile_name);
         TextView typeAge = findViewById(R.id.text_profile_type_age);
         TextView type = findViewById(R.id.text_profile_type);
+        TextView gender = findViewById(R.id.text_profile_gender);
+        TextView birthdate = findViewById(R.id.text_profile_birthdate);
         TextView breed = findViewById(R.id.text_profile_breed);
         TextView color = findViewById(R.id.text_profile_color);
         TextView weight = findViewById(R.id.text_profile_weight);
@@ -83,6 +85,8 @@ public class PetProfileActivity extends AppCompatActivity {
         typeAge.setText(displayType + ", " + age);
         
         type.setText("Вид: " + displayType);
+        gender.setText("Пол: " + (pet.getGender().isEmpty() ? "—" : pet.getGender()));
+        birthdate.setText("Дата рождения: " + (pet.getBirthDate().isEmpty() ? "—" : pet.getBirthDate()));
         breed.setText("Порода: " + (pet.getBreed().isEmpty() ? "—" : pet.getBreed()));
         color.setText("Окрас: " + (pet.getColor().isEmpty() ? "—" : pet.getColor()));
         weight.setText("Вес: " + (pet.getWeight().isEmpty() ? "—" : pet.getWeight()));

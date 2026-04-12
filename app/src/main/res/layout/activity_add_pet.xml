@@ -28,9 +28,10 @@
         <!-- Photo section -->
         <ImageView
             android:id="@+id/image_pet_photo"
-            android:layout_width="match_parent"
+            android:layout_width="200dp"
             android:layout_height="200dp"
-            android:src="@drawable/ic_pet"
+            android:layout_gravity="center"
+            android:src="@drawable/pet_care_18769509"
             android:scaleType="centerCrop"
             android:background="@drawable/rounded_photo"
             android:layout_marginBottom="8dp" />
@@ -42,6 +43,15 @@
             android:gravity="center">
 
             <Button
+                android:id="@+id/button_add_photo"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Добавить фото"
+                android:backgroundTint="@color/secondary"
+                android:textColor="@color/titleColor" />
+
+            <Button
                 android:id="@+id/button_change_photo"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -49,7 +59,8 @@
                 android:text="Изменить"
                 android:backgroundTint="@color/secondary"
                 android:textColor="@color/titleColor"
-                android:layout_marginEnd="4dp" />
+                android:layout_marginEnd="4dp"
+                android:visibility="gone" />
 
             <Button
                 android:id="@+id/button_delete_photo"
@@ -59,7 +70,8 @@
                 android:text="Удалить"
                 android:backgroundTint="#FF6B6B"
                 android:textColor="@color/white"
-                android:layout_marginStart="4dp" />
+                android:layout_marginStart="4dp"
+                android:visibility="gone" />
         </LinearLayout>
 
         <EditText
@@ -77,7 +89,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:background="@drawable/edit_text_background" />
+            android:background="@drawable/edit_text_background"
+            android:textColor="@color/black"
+            android:drawableEnd="@android:drawable/ic_menu_more"
+            style="@style/SpinnerStyle" />
 
         <EditText
             android:id="@+id/edit_custom_type"
@@ -95,18 +110,24 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:background="@drawable/edit_text_background" />
+            android:background="@drawable/edit_text_background"
+            android:textColor="@color/black"
+            android:drawableEnd="@android:drawable/ic_menu_more"
+            style="@style/SpinnerStyle" />
 
-        <EditText
-            android:id="@+id/edit_pet_birthdate"
+        <Button
+            android:id="@+id/button_birthdate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Дата рождения (YYYY-MM-DD)"
+            android:hint="Дата рождения"
             android:layout_marginTop="12dp"
             android:background="@drawable/edit_text_background"
-            android:textColor="@color/textColor"
-            android:textColorHint="@color/secondary"
-            android:inputType="date" />
+            android:textColor="@color/black"
+            android:textColorHint="@color/black"
+            android:drawableEnd="@android:drawable/ic_menu_my_calendar"
+            android:gravity="start|center_vertical"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp" />
 
         <EditText
             android:id="@+id/edit_pet_breed"
@@ -152,7 +173,9 @@
                 android:layout_weight="0.5"
                 android:layout_marginStart="8dp"
                 android:background="@drawable/edit_text_background"
-                android:textColor="@color/black" />
+                android:textColor="@color/black"
+                android:drawableEnd="@android:drawable/ic_menu_more"
+                style="@style/SpinnerStyle" />
         </LinearLayout>
 
         <EditText
