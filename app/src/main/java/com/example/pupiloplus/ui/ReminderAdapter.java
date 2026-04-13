@@ -22,6 +22,7 @@ import java.util.List;
 public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.ReminderViewHolder> {
     private final Context context;
     private final List<Reminder> items = new ArrayList<>();
+    private final List<Reminder> allItems = new ArrayList<>();
     private final ReminderClickListener listener;
     private final DatabaseHelper databaseHelper;
 
@@ -34,6 +35,7 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.Remind
         this.listener = listener;
         this.databaseHelper = new DatabaseHelper(context);
         items.addAll(reminders);
+        allItems.addAll(reminders);
     }
 
     public ReminderAdapter(Context context, List<Reminder> reminders) {
@@ -41,16 +43,62 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.Remind
         this.listener = null;
         this.databaseHelper = new DatabaseHelper(context);
         items.addAll(reminders);
+        allItems.addAll(reminders);
     }
 
     public void updateItems(List<Reminder> reminders) {
         items.clear();
         items.addAll(reminders);
+        allItems.clear();
+        allItems.addAll(reminders);
         notifyDataSetChanged();
     }
 
     public void sortByTime() {
         Collections.sort(items, (a, b) -> a.getDateTime().compareTo(b.getDateTime()));
+        notifyDataSetChanged();
+    }
+
+    public void sortByPet() {
+        Collections.sort(items, (a, b) -> {
+            String petA = getPetName(a.getPetId());
+            String petB = getPetName(b.getPetId());
+            return petA.compareTo(petB);
+        });
+        notifyDataSetChanged();
+    }
+
+    public void filterByPet(long petId) {
+        List<Reminder> filtered = new ArrayList<>();
+        for (Reminder r : allItems) {
+            if (r.getPetId() == petId) {
+                filtered.add(r);
+            }
+        }
+        items.clear();
+        items.addAll(filtered);
+        notifyDataSetChanged();
+    }
+
+    public void filterByFrequency(String frequency) {
+        List<Reminder> filtered = new ArrayList<>();
+        for (Reminder r : allItems) {
+            if (frequency.equals("По дням недели")) {
+                if (r.getPeriod().startsWith("По дням недели")) {
+                    filtered.add(r);
+                }
+            } else if (r.getPeriod().equals(frequency)) {
+                filtered.add(r);
+            }
+        }
+        items.clear();
+        items.addAll(filtered);
+        notifyDataSetChanged();
+    }
+
+    public void resetFilter() {
+        items.clear();
+        items.addAll(allItems);
         notifyDataSetChanged();
     }
 

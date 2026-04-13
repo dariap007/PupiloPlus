@@ -2,7 +2,7 @@ package com.example.pupiloplus.data;
 
 public class Reminder {
     private long id;
-    private String petIds;
+    private long petId;
     private String title;
     private String type;
     private String dateTime;

@@ -90,10 +90,17 @@ public class AddReminderActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(android.widget.AdapterView<?> parent, android.view.View view, int position, long id) {
                 daysLayout = findViewById(R.id.layout_days_of_week);
-                if (position == 2) { // "По дням недели"
+                dateText = findViewById(R.id.text_reminder_date);
+                String selectedFrequency = parent.getItemAtPosition(position).toString();
+                if ("По дням недели".equals(selectedFrequency)) {
                     showDaysOfWeekSelector();
+                    dateText.setVisibility(android.view.View.GONE);
+                } else if ("Однократно".equals(selectedFrequency)) {
+                    daysLayout.setVisibility(android.view.View.GONE);
+                    dateText.setVisibility(android.view.View.VISIBLE);
                 } else {
                     daysLayout.setVisibility(android.view.View.GONE);
+                    dateText.setVisibility(android.view.View.GONE);
                 }
             }
 
@@ -265,14 +272,18 @@ public class AddReminderActivity extends AppCompatActivity {
     }
 
     private void saveReminder() {
-        if (selectedDate.isEmpty() || timeText.getText().toString().isEmpty()) {
-            Toast.makeText(this, "Выберите дату и время", Toast.LENGTH_SHORT).show();
+        Spinner frequencySpinner = findViewById(R.id.spinner_frequency);
+        String frequency = frequencySpinner.getSelectedItem().toString();
+        boolean needsDate = "Однократно".equals(frequency);
+
+        if ((needsDate && selectedDate.isEmpty()) || timeText.getText().toString().isEmpty()) {
+            String message = needsDate ? "Выберите дату и время" : "Выберите время";
+            Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
             return;
         }
 
         EditText titleInput = findViewById(R.id.edit_reminder_title);
         Spinner typeSpinner = findViewById(R.id.spinner_reminder_type);
-        Spinner frequencySpinner = findViewById(R.id.spinner_frequency);
         EditText notesInput = findViewById(R.id.edit_reminder_notes);
         EditText customTypeInput = findViewById(R.id.edit_custom_reminder_type);
 
@@ -285,7 +296,11 @@ public class AddReminderActivity extends AppCompatActivity {
             }
         }
         String date = selectedDate;
-        String frequency = frequencySpinner.getSelectedItem().toString();
+        if (!needsDate) {
+            // Для повторяющихся напоминаний используем сегодняшнюю дату
+            Calendar today = Calendar.getInstance();
+            date = String.format(Locale.US, "%04d-%02d-%02d", today.get(Calendar.YEAR), today.get(Calendar.MONTH) + 1, today.get(Calendar.DAY_OF_MONTH));
+        }
         if (frequency.equals("По дням недели")) {
             StringBuilder days = new StringBuilder();
             LinearLayout daysLayout = findViewById(R.id.layout_days_of_week);
@@ -326,7 +341,7 @@ public class AddReminderActivity extends AppCompatActivity {
             java.util.Date reminderDate = sdf.parse(dateTimeString);
             java.util.Date now = new java.util.Date();
             now.setTime(now.getTime() + 60000); // Allow 1 minute later
-            if (reminderDate.before(now)) {
+            if (reminderDate.before(now) && needsDate) {
                 Toast.makeText(this, "Нельзя сохранить напоминание на прошедшее время", Toast.LENGTH_SHORT).show();
                 return;
             }

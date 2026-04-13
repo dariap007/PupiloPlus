@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.pupiloplus.data.DatabaseHelper;
+import com.example.pupiloplus.data.Pet;
 import com.example.pupiloplus.data.Reminder;
 import com.example.pupiloplus.notifications.NotificationScheduler;
 import com.example.pupiloplus.ui.ReminderAdapter;
@@ -40,7 +41,7 @@ public class ReminderActivity extends AppCompatActivity {
         });
 
         Button filterButton = findViewById(R.id.button_filter_reminders);
-        filterButton.setOnClickListener(v -> reminderAdapter.sortByTime());
+        filterButton.setOnClickListener(v -> showFilterDialog());
 
         Button homeTab = findViewById(R.id.button_tab_home);
         homeTab.setOnClickListener(v -> {
@@ -107,5 +108,58 @@ public class ReminderActivity extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+    }
+
+    private void showFilterDialog() {
+        String[] options = {"Сортировать по времени", "Сортировать по питомцу", "Фильтровать по питомцу", "Фильтровать по частоте", "Показать все"};
+        new AlertDialog.Builder(this)
+                .setTitle("Фильтр и сортировка")
+                .setItems(options, (dialog, which) -> {
+                    switch (which) {
+                        case 0:
+                            reminderAdapter.sortByTime();
+                            break;
+                        case 1:
+                            reminderAdapter.sortByPet();
+                            break;
+                        case 2:
+                            showPetFilterDialog();
+                            break;
+                        case 3:
+                            showFrequencyFilterDialog();
+                            break;
+                        case 4:
+                            reminderAdapter.resetFilter();
+                            break;
+                    }
+                })
+                .show();
+    }
+
+    private void showPetFilterDialog() {
+        List<Pet> pets = databaseHelper.getAllPets();
+        String[] petNames = new String[pets.size()];
+        for (int i = 0; i < pets.size(); i++) {
+            petNames[i] = pets.get(i).getName();
+        }
+        new AlertDialog.Builder(this)
+                .setTitle("Выберите питомца")
+                .setItems(petNames, (dialog, which) -> {
+                    long petId = pets.get(which).getId();
+                    reminderAdapter.filterByPet(petId);
+                })
+                .setNegativeButton("Отмена", null)
+                .show();
+    }
+
+    private void showFrequencyFilterDialog() {
+        String[] frequencies = {"Однократно", "Ежедневно", "По дням недели"};
+        new AlertDialog.Builder(this)
+                .setTitle("Выберите частоту")
+                .setItems(frequencies, (dialog, which) -> {
+                    reminderAdapter.filterByFrequency(frequencies[which]);
+                })
+                .setNegativeButton("Отмена", null)
+                .show();
     }
 }

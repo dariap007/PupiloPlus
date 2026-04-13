@@ -26,8 +26,8 @@ public class NotificationScheduler {
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(dateFormat.parse(dateTimeString));
 
-            // If the scheduled time is in the past, schedule for the next day
-            if (calendar.before(Calendar.getInstance()) && "Once".equals(frequency)) {
+            // If the scheduled time is in the past, schedule for the next occurrence
+            if (calendar.before(Calendar.getInstance())) {
                 calendar.add(Calendar.DAY_OF_YEAR, 1);
             }
 
