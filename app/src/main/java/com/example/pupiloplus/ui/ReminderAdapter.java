@@ -10,8 +10,10 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.pupiloplus.R;
+import com.example.pupiloplus.data.DatabaseHelper;
+import com.example.pupiloplus.data.Pet;
 import com.example.pupiloplus.data.Reminder;
+import com.example.pupiloplus.R;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -21,6 +23,7 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.Remind
     private final Context context;
     private final List<Reminder> items = new ArrayList<>();
     private final ReminderClickListener listener;
+    private final DatabaseHelper databaseHelper;
 
     public interface ReminderClickListener {
         void onReminderClick(Reminder reminder);
@@ -29,12 +32,14 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.Remind
     public ReminderAdapter(Context context, List<Reminder> reminders, ReminderClickListener listener) {
         this.context = context;
         this.listener = listener;
+        this.databaseHelper = new DatabaseHelper(context);
         items.addAll(reminders);
     }
 
     public ReminderAdapter(Context context, List<Reminder> reminders) {
         this.context = context;
         this.listener = null;
+        this.databaseHelper = new DatabaseHelper(context);
         items.addAll(reminders);
     }
 
@@ -49,6 +54,11 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.Remind
         notifyDataSetChanged();
     }
 
+    @Override
+    public int getItemCount() {
+        return items.size();
+    }
+
     @NonNull
     @Override
     public ReminderViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -60,9 +70,10 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.Remind
     public void onBindViewHolder(@NonNull ReminderViewHolder holder, int position) {
         Reminder reminder = items.get(position);
         holder.title.setText(reminder.getTitle());
-        holder.details.setText(reminder.getType() + " • " + reminder.getDateTime());
+        String petName = getPetName(reminder.getPetId());
+        holder.details.setText(reminder.getType() + " • " + petName + " • " + reminder.getDateTime());
         holder.period.setText(reminder.getPeriod());
-        holder.dose.setText(reminder.getNotes() != null && !reminder.getNotes().isEmpty() ? reminder.getNotes() : reminder.getDose());
+        holder.dose.setText((CharSequence) (reminder.getNotes() != null && !reminder.getNotes().isEmpty() ? reminder.getNotes() : reminder.getDose()));
         holder.icon.setImageResource(reminder.getImageRes());
         holder.itemView.setOnClickListener(v -> {
             if (listener != null) {
@@ -71,9 +82,9 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.Remind
         });
     }
 
-    @Override
-    public int getItemCount() {
-        return items.size();
+    private String getPetName(long petId) {
+        Pet pet = databaseHelper.getPetById(petId);
+        return pet != null ? pet.getName() : "Неизвестный питомец";
     }
 
     class ReminderViewHolder extends RecyclerView.ViewHolder {

@@ -30,7 +30,6 @@
         <item>Однократно</item>
         <item>Ежедневно</item>
         <item>По дням недели</item>
-        <item>Раз в неделю</item>
     </string-array>
     <string-array name="days_of_week">
         <item>Понедельник</item>

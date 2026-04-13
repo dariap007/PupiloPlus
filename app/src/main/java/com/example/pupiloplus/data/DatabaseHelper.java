@@ -23,7 +23,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE " + TABLE_PETS + " (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, type TEXT, gender TEXT, birthDate TEXT, breed TEXT, color TEXT, weight TEXT, weightUnit TEXT, chip TEXT, food TEXT, notes TEXT, photoRes INTEGER, photoPath TEXT)");
-        db.execSQL("CREATE TABLE " + TABLE_REMINDERS + " (id INTEGER PRIMARY KEY AUTOINCREMENT, petId INTEGER, title TEXT, type TEXT, dateTime TEXT, period TEXT, dose TEXT, extra TEXT, notes TEXT, imageRes INTEGER, notifyBefore TEXT)");
+        db.execSQL("CREATE TABLE " + TABLE_REMINDERS + " (id INTEGER PRIMARY KEY AUTOINCREMENT, petIds TEXT, title TEXT, type TEXT, dateTime TEXT, period TEXT, dose TEXT, extra TEXT, notes TEXT, imageRes INTEGER, notifyBefore TEXT)");
     }
 
     @Override
@@ -119,6 +119,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void updateReminder(Reminder reminder) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
+        values.put("petId", reminder.getPetId());
         values.put("title", reminder.getTitle());
         values.put("type", reminder.getType());
         values.put("dateTime", reminder.getDateTime());
@@ -126,8 +127,45 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put("dose", reminder.getDose());
         values.put("extra", reminder.getExtra());
         values.put("notes", reminder.getNotes());
+        values.put("imageRes", reminder.getImageRes());
         values.put("notifyBefore", reminder.getNotifyBefore());
         db.update(TABLE_REMINDERS, values, "id = ?", new String[]{String.valueOf(reminder.getId())});
+    }
+
+    public Reminder getReminderById(long id) {
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.query(TABLE_REMINDERS, null, "id = ?", new String[]{String.valueOf(id)}, null, null, null);
+        if (cursor != null && cursor.moveToFirst()) {
+            Reminder reminder = createReminder(cursor);
+            cursor.close();
+            return reminder;
+        }
+        return null;
+    }
+
+    public List<Reminder> getAllReminders() {
+        List<Reminder> reminders = new ArrayList<>();
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.query(TABLE_REMINDERS, null, null, null, null, null, null);
+        if (cursor != null) {
+            while (cursor.moveToNext()) {
+                reminders.add(createReminder(cursor));
+            }
+            cursor.close();
+        }
+        return reminders;
+    }
+
+    public int getReminderCountOnDate(int year, int month, int day) {
+        SQLiteDatabase db = getReadableDatabase();
+        String dateStr = String.format("%04d-%02d-%02d", year, month + 1, day);
+        Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM " + TABLE_REMINDERS + " WHERE dateTime LIKE ?", new String[]{dateStr + "%"});
+        if (cursor != null && cursor.moveToFirst()) {
+            int count = cursor.getInt(0);
+            cursor.close();
+            return count;
+        }
+        return 0;
     }
 
     public void deleteReminder(long id) {
@@ -135,36 +173,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.delete(TABLE_REMINDERS, "id = ?", new String[]{String.valueOf(id)});
     }
 
-    public List<Reminder> getAllReminders() {
+    public List<Reminder> getRemindersByGroup(String title, String type, String dateTime, String period, String notes) {
         List<Reminder> reminders = new ArrayList<>();
         SQLiteDatabase db = getReadableDatabase();
-        try (Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_REMINDERS + " ORDER BY dateTime ASC", null)) {
+        Cursor cursor = db.query(TABLE_REMINDERS, null, "title = ? AND type = ? AND dateTime = ? AND period = ? AND notes = ?", new String[]{title, type, dateTime, period, notes}, null, null, null);
+        if (cursor != null) {
             while (cursor.moveToNext()) {
                 reminders.add(createReminder(cursor));
             }
+            cursor.close();
         }
         return reminders;
-    }
-
-    public int getReminderCountOnDate(int year, int month, int day) {
-        String search = String.format("%04d-%02d-%02d", year, month, day);
-        SQLiteDatabase db = getReadableDatabase();
-        try (Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM " + TABLE_REMINDERS + " WHERE dateTime LIKE ?", new String[]{search + "%"})) {
-            if (cursor.moveToFirst()) {
-                return cursor.getInt(0);
-            }
-        }
-        return 0;
-    }
-
-    public Reminder getReminderById(long id) {
-        SQLiteDatabase db = getReadableDatabase();
-        try (Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_REMINDERS + " WHERE id = ?", new String[]{String.valueOf(id)})) {
-            if (cursor.moveToFirst()) {
-                return createReminder(cursor);
-            }
-        }
-        return null;
     }
 
     private Pet createPet(Cursor cursor) {
