@@ -58,6 +58,12 @@ public class AddReminderActivity extends AppCompatActivity {
         reminderId = getIntent().getLongExtra("reminderId", -1L);
         isEdit = getIntent().getBooleanExtra("edit", false);
 
+        if (isEdit) {
+            getSupportActionBar().setTitle("Редактирование напоминания");
+        } else {
+            getSupportActionBar().setTitle("Добавление напоминания");
+        }
+
         // Spinner для типа напоминания
         Spinner typeSpinner = findViewById(R.id.spinner_reminder_type);
         String[] reminderTypes = getResources().getStringArray(R.array.reminder_types);
@@ -95,7 +101,7 @@ public class AddReminderActivity extends AppCompatActivity {
                 dateText = findViewById(R.id.text_reminder_date);
                 String selectedFrequency = parent.getItemAtPosition(position).toString();
                 if ("По дням недели".equals(selectedFrequency)) {
-                    showDaysOfWeekSelector();
+                    showDaysOfWeekSelector(null);
                     dateText.setVisibility(android.view.View.GONE);
                 } else if ("Однократно".equals(selectedFrequency)) {
                     daysLayout.setVisibility(android.view.View.GONE);
@@ -153,29 +159,32 @@ public class AddReminderActivity extends AppCompatActivity {
         }
 
         String period = reminder.getPeriod();
+        List<String> selectedDays = new ArrayList<>();
+        if (period.contains("По дням недели") && period.contains(": ")) {
+            String daysStr = period.substring(period.indexOf(": ") + 2);
+            for (String s : daysStr.split(", ")) {
+                selectedDays.add(s.trim());
+            }
+        }
+
         if (period.startsWith("По дням недели")) {
             frequencySpinner.setSelection(((ArrayAdapter) frequencySpinner.getAdapter()).getPosition("По дням недели"));
         } else {
             frequencySpinner.setSelection(((ArrayAdapter) frequencySpinner.getAdapter()).getPosition(period));
         }
 
-        if (reminder.getPeriod().contains("По дням недели")) {
-            showDaysOfWeekSelector();
-            // Parse and check days
-            if (reminder.getPeriod().contains(": ")) {
-                String daysStr = reminder.getPeriod().substring(reminder.getPeriod().indexOf(": ") + 2);
-                String[] selectedDays = daysStr.split(", ");
-                LinearLayout daysLayout = findViewById(R.id.layout_days_of_week);
-                for (int i = 0; i < daysLayout.getChildCount(); i++) {
-                    CheckBox cb = (CheckBox) daysLayout.getChildAt(i);
-                    for (String day : selectedDays) {
-                        if (cb.getText().toString().equals(day.trim())) {
-                            cb.setChecked(true);
-                            break;
-                        }
-                    }
-                }
-            }
+        // Manually trigger the frequency spinner logic
+        String selectedFreq = frequencySpinner.getSelectedItem().toString();
+        daysLayout = findViewById(R.id.layout_days_of_week);
+        if ("По дням недели".equals(selectedFreq)) {
+            showDaysOfWeekSelector(selectedDays);
+            dateText.setVisibility(android.view.View.GONE);
+        } else if ("Однократно".equals(selectedFreq)) {
+            daysLayout.setVisibility(android.view.View.GONE);
+            dateText.setVisibility(android.view.View.VISIBLE);
+        } else {
+            daysLayout.setVisibility(android.view.View.GONE);
+            dateText.setVisibility(android.view.View.GONE);
         }
 
         EditText notesInput = findViewById(R.id.edit_reminder_notes);
@@ -259,7 +268,7 @@ public class AddReminderActivity extends AppCompatActivity {
         timePickerDialog.show();
     }
 
-    private void showDaysOfWeekSelector() {
+    private void showDaysOfWeekSelector(List<String> selectedDays) {
         daysLayout = findViewById(R.id.layout_days_of_week);
         daysLayout.removeAllViews();
         daysLayout.setVisibility(android.view.View.VISIBLE);
@@ -269,6 +278,9 @@ public class AddReminderActivity extends AppCompatActivity {
             CheckBox checkBox = new CheckBox(this);
             checkBox.setText(day);
             checkBox.setTextColor(getResources().getColor(R.color.textColor));
+            if (selectedDays != null && selectedDays.contains(day.trim())) {
+                checkBox.setChecked(true);
+            }
             daysLayout.addView(checkBox);
         }
     }
