@@ -73,8 +73,13 @@
         android:textColor="@color/textColor"
         android:layout_marginBottom="24dp" />
 
-    <Button
-        android:id="@+id/button_back_settings"
+    <Button        android:id="@+id/button_test_notification"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Отправить тестовое уведомление"
+        android:layout_marginBottom="16dp" />
+
+    <Button        android:id="@+id/button_back_settings"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Назад"

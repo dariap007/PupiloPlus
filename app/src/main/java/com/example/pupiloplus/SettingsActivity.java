@@ -10,6 +10,8 @@ import android.widget.Switch;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 
+import com.example.pupiloplus.notifications.NotificationHelper;
+
 public class SettingsActivity extends AppCompatActivity {
     private static final String PREFS = "pupiloplus_prefs";
     private static final String KEY_DARK = "dark_theme";
@@ -24,6 +26,7 @@ public class SettingsActivity extends AppCompatActivity {
         Switch themeSwitch = findViewById(R.id.switch_theme);
         Switch notifySwitch = findViewById(R.id.switch_notifications);
         Button backButton = findViewById(R.id.button_back_settings);
+        Button testNotificationButton = findViewById(R.id.button_test_notification);
 
         SharedPreferences prefs = getSharedPreferences(PREFS, MODE_PRIVATE);
         boolean darkMode = prefs.getBoolean(KEY_DARK, false);
@@ -40,6 +43,11 @@ public class SettingsActivity extends AppCompatActivity {
 
         notifySwitch.setOnCheckedChangeListener((CompoundButton buttonView, boolean isChecked) -> {
             prefs.edit().putBoolean(KEY_NOTIFY, isChecked).apply();
+        });
+
+        testNotificationButton.setOnClickListener(v -> {
+            NotificationHelper notificationHelper = new NotificationHelper(this);
+            notificationHelper.createNotification("Тестовое уведомление", "Это тестовое push-уведомление для проверки работы.");
         });
 
         backButton.setOnClickListener(v -> {

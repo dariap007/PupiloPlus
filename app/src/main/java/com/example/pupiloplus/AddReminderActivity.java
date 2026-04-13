@@ -371,7 +371,12 @@ public class AddReminderActivity extends AppCompatActivity {
             reminder.setPetId(petId);
 
             long savedReminderId = databaseHelper.insertReminder(reminder);
-            NotificationScheduler.schedule(this, savedReminderId, title, "Напоминание для питомца", dateTimeString, frequency);
+            String petName = databaseHelper.getPetById(petId).getName();
+            String notificationMessage = title + " (" + type + ") для " + petName;
+            if (!notes.isEmpty()) {
+                notificationMessage += " - " + notes;
+            }
+            NotificationScheduler.schedule(this, savedReminderId, title, notificationMessage, dateTimeString, frequency);
         }
 
         Toast.makeText(this, isEdit ? "Напоминание обновлено" : "Напоминание добавлено", Toast.LENGTH_SHORT).show();
