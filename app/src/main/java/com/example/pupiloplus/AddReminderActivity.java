@@ -19,9 +19,11 @@ import com.example.pupiloplus.data.DatabaseHelper;
 import com.example.pupiloplus.data.Pet;
 import com.example.pupiloplus.data.Reminder;
 import com.example.pupiloplus.notifications.NotificationScheduler;
+import com.example.pupiloplus.ui.ColorSpinnerAdapter;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
@@ -58,8 +60,8 @@ public class AddReminderActivity extends AppCompatActivity {
 
         // Spinner для типа напоминания
         Spinner typeSpinner = findViewById(R.id.spinner_reminder_type);
-        ArrayAdapter<CharSequence> typeAdapter = ArrayAdapter.createFromResource(this, R.array.reminder_types, R.layout.spinner_item);
-        typeAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+        String[] reminderTypes = getResources().getStringArray(R.array.reminder_types);
+        ColorSpinnerAdapter typeAdapter = new ColorSpinnerAdapter(this, R.layout.spinner_item_with_color, java.util.Arrays.asList(reminderTypes));
         typeSpinner.setAdapter(typeAdapter);
         typeSpinner.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
             @Override

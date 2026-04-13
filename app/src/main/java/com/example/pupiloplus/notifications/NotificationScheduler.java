@@ -50,6 +50,16 @@ public class NotificationScheduler {
                     alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
                 }
             }
+
+            // For testing: if the reminder is within 5 minutes, show notification immediately
+            long currentTime = System.currentTimeMillis();
+            long reminderTime = calendar.getTimeInMillis();
+            android.util.Log.d("NotificationScheduler", "Scheduling reminder at " + reminderTime + ", current " + currentTime);
+            if (reminderTime - currentTime <= 5 * 60 * 1000) { // 5 minutes
+                android.util.Log.d("NotificationScheduler", "Showing immediate notification");
+                NotificationHelper notificationHelper = new NotificationHelper(context);
+                notificationHelper.createNotification(title, message);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

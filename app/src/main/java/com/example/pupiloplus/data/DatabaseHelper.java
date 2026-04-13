@@ -7,7 +7,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "pupiloplus.db";
@@ -158,14 +161,36 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public int getReminderCountOnDate(int year, int month, int day) {
         SQLiteDatabase db = getReadableDatabase();
-        String dateStr = String.format("%04d-%02d-%02d", year, month + 1, day);
-        Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM " + TABLE_REMINDERS + " WHERE dateTime LIKE ?", new String[]{dateStr + "%"});
+        String dateStr = String.format("%04d-%02d-%02d", year, month, day);
+        String dayOfWeek = getDayOfWeek(year, month, day);
+        Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM " + TABLE_REMINDERS + " WHERE (dateTime LIKE ? AND period = 'Однократно') OR period = 'Ежедневно' OR (period LIKE 'По дням недели%' AND period LIKE ?)", new String[]{dateStr + "%", "%" + dayOfWeek + "%"});
         if (cursor != null && cursor.moveToFirst()) {
             int count = cursor.getInt(0);
             cursor.close();
             return count;
         }
         return 0;
+    }
+    public List<String> getReminderTypesOnDate(int year, int month, int day) {
+        Set<String> typesSet = new LinkedHashSet<>();
+        SQLiteDatabase db = getReadableDatabase();
+        String dateStr = String.format("%04d-%02d-%02d", year, month, day);
+        String dayOfWeek = getDayOfWeek(year, month, day);
+        Cursor cursor = db.rawQuery("SELECT type FROM " + TABLE_REMINDERS + " WHERE (dateTime LIKE ? AND period = 'Однократно') OR period = 'Ежедневно' OR (period LIKE 'По дням недели%' AND period LIKE ?)", new String[]{dateStr + "%", "%" + dayOfWeek + "%"});
+        if (cursor != null) {
+            while (cursor.moveToNext()) {
+                typesSet.add(cursor.getString(0));
+            }
+            cursor.close();
+        }
+        return new ArrayList<>(typesSet);
+    }
+    private String getDayOfWeek(int year, int month, int day) {
+        Calendar cal = Calendar.getInstance();
+        cal.set(year, month - 1, day);
+        int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
+        String[] days = {"Воскресенье", "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота"};
+        return days[dayOfWeek - 1];
     }
 
     public void deleteReminder(long id) {

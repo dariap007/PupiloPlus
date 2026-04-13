@@ -14,6 +14,9 @@ import com.example.pupiloplus.R;
 import com.example.pupiloplus.data.DatabaseHelper;
 
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class CustomCalendarView extends View {
 
@@ -28,6 +31,7 @@ public class CustomCalendarView extends View {
     private Calendar calendar;
     private DatabaseHelper databaseHelper;
     private OnDateSelectedListener onDateSelectedListener;
+    private Map<String, Integer> typeColors;
 
     private static final int DAYS_IN_WEEK = 7;
     private static final String[] monthNames = {"Январь", "Февраль", "Март", "Апрель", "Май", "Июнь",
@@ -56,6 +60,14 @@ public class CustomCalendarView extends View {
         databaseHelper = new DatabaseHelper(context);
         calendar = Calendar.getInstance();
 
+        typeColors = new HashMap<>();
+        typeColors.put("Кормление", Color.parseColor("#B48952"));
+        typeColors.put("Визит к врачу", Color.parseColor("#C5D7F2"));
+        typeColors.put("Смена лотка", Color.parseColor("#EDDA8C"));
+        typeColors.put("Лекарства", Color.parseColor("#A92F50"));
+        typeColors.put("Смена воды", Color.parseColor("#4F204D"));
+        typeColors.put("Другое", Color.parseColor("#AFC29C"));
+
         paintDay = new Paint();
         paintDay.setColor(Color.WHITE);
         paintDay.setStyle(Paint.Style.FILL);
@@ -75,7 +87,6 @@ public class CustomCalendarView extends View {
         paintText.setTextAlign(Paint.Align.CENTER);
 
         paintReminderDot = new Paint();
-        paintReminderDot.setColor(Color.RED);
         paintReminderDot.setStyle(Paint.Style.FILL);
     }
 
@@ -133,14 +144,14 @@ public class CustomCalendarView extends View {
                 }
 
                 // Check if this day has reminders
-                int reminderCount = databaseHelper.getReminderCountOnDate(
+                List<String> reminderTypes = databaseHelper.getReminderTypesOnDate(
                         calendar.get(Calendar.YEAR),
                         calendar.get(Calendar.MONTH) + 1,
                         day
                 );
 
                 // Draw border if has reminders
-                if (reminderCount > 0) {
+                if (!reminderTypes.isEmpty()) {
                     canvas.drawRect(x + 5, y + 5, x + cellWidth - 5, y + cellHeight - 5, paintHasReminder);
                 }
 
@@ -151,11 +162,21 @@ public class CustomCalendarView extends View {
                 }
                 canvas.drawText(String.valueOf(day), x + cellWidth / 2, y + cellHeight * 0.6f, dayTextPaint);
 
-                // Draw reminder dot if has reminders
-                if (reminderCount > 0) {
-                    float dotX = x + cellWidth - 12;
-                    float dotY = y + 12;
-                    canvas.drawCircle(dotX, dotY, 8, paintReminderDot);
+                // Draw reminder dots if has reminders
+                if (!reminderTypes.isEmpty()) {
+                    float dotRadius = 6;
+                    float dotSpacing = 2;
+                    float startX = x + cellWidth - dotRadius - 5;
+                    float dotY = y + dotRadius + 5;
+                    int maxDots = 6; // Limit to 6 dots
+                    for (int i = 0; i < Math.min(reminderTypes.size(), maxDots); i++) {
+                        String type = reminderTypes.get(i);
+                        Integer color = typeColors.get(type);
+                        if (color == null) color = Color.GRAY;
+                        paintReminderDot.setColor(color);
+                        float dotX = startX - i * (dotRadius * 2 + dotSpacing);
+                        canvas.drawCircle(dotX, dotY, dotRadius, paintReminderDot);
+                    }
                 }
 
                 day++;
