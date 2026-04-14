@@ -17,7 +17,7 @@ import java.util.Set;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "pupiloplus.db";
-    private static final int DATABASE_VERSION = 4;
+    private static final int DATABASE_VERSION = 5;
 
     private static final String TABLE_PETS = "pets";
     private static final String TABLE_REMINDERS = "reminders";
@@ -40,6 +40,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if (oldVersion < 4) {
             // Add weightUnit column to existing pets table if not exists
             db.execSQL("ALTER TABLE " + TABLE_PETS + " ADD COLUMN weightUnit TEXT DEFAULT 'кг'");
+        }
+        if (oldVersion < 5) {
+            // Rename petId to petIds in reminders table if exists
+            try {
+                db.execSQL("ALTER TABLE " + TABLE_REMINDERS + " RENAME COLUMN petId TO petIds");
+            } catch (Exception e) {
+                // Column might not exist or already renamed
+            }
         }
         // Handle other upgrades if needed
     }
@@ -112,7 +120,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public long insertReminder(Reminder reminder) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put("petId", reminder.getPetId());
+        values.put("petIds", reminder.getPetId());
         values.put("title", reminder.getTitle());
         values.put("type", reminder.getType());
         values.put("dateTime", reminder.getDateTime());
@@ -128,7 +136,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void updateReminder(Reminder reminder) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put("petId", reminder.getPetId());
+        values.put("petIds", reminder.getPetId());
         values.put("title", reminder.getTitle());
         values.put("type", reminder.getType());
         values.put("dateTime", reminder.getDateTime());
@@ -251,7 +259,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private Reminder createReminder(Cursor cursor) {
         Reminder reminder = new Reminder();
         reminder.setId(cursor.getLong(cursor.getColumnIndexOrThrow("id")));
-        reminder.setPetId(cursor.getLong(cursor.getColumnIndexOrThrow("petId")));
+        reminder.setPetId(cursor.getLong(cursor.getColumnIndexOrThrow("petIds")));
         reminder.setTitle(cursor.getString(cursor.getColumnIndexOrThrow("title")));
         reminder.setType(cursor.getString(cursor.getColumnIndexOrThrow("type")));
         reminder.setDateTime(cursor.getString(cursor.getColumnIndexOrThrow("dateTime")));

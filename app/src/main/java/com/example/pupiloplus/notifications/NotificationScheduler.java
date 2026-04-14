@@ -6,8 +6,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 
+import androidx.core.app.AlarmManagerCompat;
+
+import com.example.pupiloplus.MainActivity;
+
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Locale;
 
 public class NotificationScheduler {
@@ -27,12 +33,11 @@ public class NotificationScheduler {
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(dateFormat.parse(dateTimeString));
 
-            // If the scheduled time is in the past, schedule for the next occurrence
-            if (calendar.before(Calendar.getInstance())) {
-                calendar.add(Calendar.DAY_OF_YEAR, 1);
-            }
+            calendar = getNextOccurrence(calendar, frequency);
+            long scheduledTime = calendar.getTimeInMillis();
 
             Intent intent = new Intent(context, NotificationReceiver.class);
+            intent.setAction("com.example.pupiloplus.notifications.ACTION_NOTIFY_" + reminderId);
             intent.putExtra("title", title);
             intent.putExtra("message", message);
             intent.putExtra("reminderId", reminderId);
@@ -44,22 +49,12 @@ public class NotificationScheduler {
 
             AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
             if (alarmManager != null) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
-                } else {
-                    alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
-                }
+                PendingIntent showIntent = PendingIntent.getActivity(context, 0, new Intent(context, MainActivity.class), PendingIntent.FLAG_IMMUTABLE);
+                AlarmManager.AlarmClockInfo alarmClockInfo = new AlarmManager.AlarmClockInfo(scheduledTime, showIntent);
+                alarmManager.setAlarmClock(alarmClockInfo, pendingIntent);
             }
 
-            // For testing: if the reminder is within 5 minutes, show notification immediately
-            long currentTime = System.currentTimeMillis();
-            long reminderTime = calendar.getTimeInMillis();
-            android.util.Log.d("NotificationScheduler", "Scheduling reminder at " + reminderTime + ", current " + currentTime);
-            if (reminderTime - currentTime <= 5 * 60 * 1000) { // 5 minutes
-                android.util.Log.d("NotificationScheduler", "Showing immediate notification");
-                NotificationHelper notificationHelper = new NotificationHelper(context);
-                notificationHelper.createNotification(title, message);
-            }
+            android.util.Log.d("NotificationScheduler", "Scheduling reminder at " + scheduledTime);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -72,6 +67,7 @@ public class NotificationScheduler {
      */
     public static void cancel(Context context, long reminderId) {
         Intent intent = new Intent(context, NotificationReceiver.class);
+        intent.setAction("com.example.pupiloplus.notifications.ACTION_NOTIFY_" + reminderId);
         int requestCode = (int) (reminderId & 0xFFFFFFFF);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, requestCode, intent, PendingIntent.FLAG_NO_CREATE | PendingIntent.FLAG_IMMUTABLE);
 
@@ -81,5 +77,96 @@ public class NotificationScheduler {
                 alarmManager.cancel(pendingIntent);
             }
         }
+    }
+
+    private static Calendar getNextOccurrence(Calendar calendar, String frequency) {
+        Calendar now = Calendar.getInstance();
+        if (frequency == null) {
+            if (calendar.before(now)) {
+                calendar.add(Calendar.DAY_OF_YEAR, 1);
+            }
+            return calendar;
+        }
+
+        if (frequency.equals("Ежедневно")) {
+            while (calendar.before(now)) {
+                calendar.add(Calendar.DAY_OF_YEAR, 1);
+            }
+            return calendar;
+        }
+
+        if (frequency.startsWith("По дням недели:")) {
+            String daysPart = frequency.substring("По дням недели:".length()).trim();
+            List<Integer> targetDays = parseWeekdays(daysPart);
+            if (targetDays.isEmpty()) {
+                if (calendar.before(now)) {
+                    calendar.add(Calendar.DAY_OF_YEAR, 1);
+                }
+                return calendar;
+            }
+
+            Calendar next = Calendar.getInstance();
+            next.set(Calendar.HOUR_OF_DAY, calendar.get(Calendar.HOUR_OF_DAY));
+            next.set(Calendar.MINUTE, calendar.get(Calendar.MINUTE));
+            next.set(Calendar.SECOND, calendar.get(Calendar.SECOND));
+            next.set(Calendar.MILLISECOND, calendar.get(Calendar.MILLISECOND));
+
+            int currentDayOfWeek = next.get(Calendar.DAY_OF_WEEK);
+            int bestDelta = Integer.MAX_VALUE;
+            for (int day : targetDays) {
+                int delta = (day - currentDayOfWeek + 7) % 7;
+                if (delta == 0 && next.before(now)) {
+                    delta = 7;
+                }
+                if (delta < bestDelta) {
+                    bestDelta = delta;
+                }
+            }
+            if (bestDelta == Integer.MAX_VALUE) {
+                bestDelta = 7;
+            }
+            next.add(Calendar.DAY_OF_YEAR, bestDelta);
+            return next;
+        }
+
+        if (calendar.before(now)) {
+            calendar.add(Calendar.DAY_OF_YEAR, 1);
+        }
+        return calendar;
+    }
+
+    private static List<Integer> parseWeekdays(String daysPart) {
+        List<Integer> days = new ArrayList<>();
+        if (daysPart == null || daysPart.isEmpty()) {
+            return days;
+        }
+        String[] split = daysPart.split(",");
+        for (String dayName : split) {
+            String value = dayName.trim().toLowerCase(Locale.ROOT);
+            switch (value) {
+                case "понедельник":
+                    days.add(Calendar.MONDAY);
+                    break;
+                case "вторник":
+                    days.add(Calendar.TUESDAY);
+                    break;
+                case "среда":
+                    days.add(Calendar.WEDNESDAY);
+                    break;
+                case "четверг":
+                    days.add(Calendar.THURSDAY);
+                    break;
+                case "пятница":
+                    days.add(Calendar.FRIDAY);
+                    break;
+                case "суббота":
+                    days.add(Calendar.SATURDAY);
+                    break;
+                case "воскресенье":
+                    days.add(Calendar.SUNDAY);
+                    break;
+            }
+        }
+        return days;
     }
 }

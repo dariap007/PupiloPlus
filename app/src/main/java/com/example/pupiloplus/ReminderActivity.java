@@ -97,6 +97,7 @@ public class ReminderActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         loadReminders();
+        reminderAdapter.resetFilter();
     }
 
     private void loadReminders() {
