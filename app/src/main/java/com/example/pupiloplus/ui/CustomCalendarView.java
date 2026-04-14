@@ -61,12 +61,12 @@ public class CustomCalendarView extends View {
         calendar = Calendar.getInstance();
 
         typeColors = new HashMap<>();
-        typeColors.put("Кормление", Color.parseColor("#B48952"));
-        typeColors.put("Визит к врачу", Color.parseColor("#C5D7F2"));
-        typeColors.put("Смена лотка", Color.parseColor("#EDDA8C"));
+        typeColors.put("Кормление", Color.parseColor("#6b4c24"));
+        typeColors.put("Визит к врачу", Color.parseColor("#6e8b4f"));
+        typeColors.put("Смена лотка", Color.parseColor("#ebc017"));
         typeColors.put("Лекарства", Color.parseColor("#A92F50"));
-        typeColors.put("Смена воды", Color.parseColor("#4F204D"));
-        typeColors.put("Другое", Color.parseColor("#AFC29C"));
+        typeColors.put("Смена воды", Color.parseColor("#73a1e7"));
+        typeColors.put("Другое", Color.parseColor("#4F204D"));
 
         paintDay = new Paint();
         paintDay.setColor(Color.WHITE);

@@ -1,6 +1,7 @@
 package com.example.pupiloplus.ui;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.provider.MediaStore;
@@ -59,20 +60,20 @@ public class PetAdapter extends RecyclerView.Adapter<PetAdapter.PetViewHolder> {
         holder.description.setText(displayType + ", " + age);
 
         // Load pet photo
-        int photoRes = pet.getPhotoRes() != 0 ? pet.getPhotoRes() : R.drawable.ic_pet;
+        int photoRes = resolvePhotoRes(pet.getPhotoRes());
         if (pet.getPhotoPath() != null && !pet.getPhotoPath().isEmpty()) {
             try {
                 Bitmap bitmap = loadBitmapFromInternalStorage(pet.getPhotoPath());
                 if (bitmap != null) {
                     holder.image.setImageBitmap(bitmap);
                 } else {
-                    holder.image.setImageResource(photoRes);
+                    setImageResourceSafe(holder.image, photoRes);
                 }
             } catch (Exception e) {
-                holder.image.setImageResource(photoRes);
+                setImageResourceSafe(holder.image, photoRes);
             }
         } else {
-            holder.image.setImageResource(photoRes);
+            setImageResourceSafe(holder.image, photoRes);
         }
 
         holder.card.setOnClickListener(v -> listener.onPetClick(pet));
@@ -128,6 +129,26 @@ public class PetAdapter extends RecyclerView.Adapter<PetAdapter.PetViewHolder> {
     @Override
     public int getItemCount() {
         return items.size();
+    }
+
+    private int resolvePhotoRes(int photoRes) {
+        if (photoRes == 0) {
+            return R.drawable.ic_pet;
+        }
+        try {
+            context.getResources().getResourceName(photoRes);
+            return photoRes;
+        } catch (Resources.NotFoundException e) {
+            return R.drawable.ic_pet;
+        }
+    }
+
+    private void setImageResourceSafe(ImageView imageView, int photoRes) {
+        try {
+            imageView.setImageResource(photoRes);
+        } catch (Resources.NotFoundException e) {
+            imageView.setImageResource(R.drawable.ic_pet);
+        }
     }
 
     static class PetViewHolder extends RecyclerView.ViewHolder {

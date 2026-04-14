@@ -398,18 +398,22 @@ public class AddReminderActivity extends AppCompatActivity {
     }
 
     private int getImageResForType(String type) {
-        if (type.contains("Кормление")) {
-            return R.drawable.ic_reminder; // Use different if available
-        } else if (type.contains("Врач")) {
-            return R.drawable.ic_reminder;
-        } else if (type.contains("Лотка")) {
-            return R.drawable.ic_reminder;
-        } else if (type.contains("Лекарства")) {
-            return R.drawable.ic_reminder;
-        } else if (type.contains("Воды")) {
-            return R.drawable.ic_reminder;
+        if (type == null) {
+            return R.drawable.ic_bell;
+        }
+        String normalized = type.toLowerCase(Locale.getDefault());
+        if (normalized.contains("кормление")) {
+            return R.drawable.ic_food;
+        } else if (normalized.contains("визит") || normalized.contains("врач")) {
+            return R.drawable.ic_doctor;
+        } else if (normalized.contains("лотка")) {
+            return R.drawable.ic_litter;
+        } else if (normalized.contains("лекарства")) {
+            return R.drawable.ic_pill;
+        } else if (normalized.contains("воды")) {
+            return R.drawable.ic_water;
         } else {
-            return R.drawable.ic_reminder;
+            return R.drawable.ic_bell;
         }
     }
 }

@@ -2,6 +2,7 @@ package com.example.pupiloplus;
 
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -64,19 +65,20 @@ public class PetProfileActivity extends AppCompatActivity {
         Button deleteButton = findViewById(R.id.button_delete_pet);
 
         // Load pet photo
+        int photoRes = resolvePhotoRes(pet.getPhotoRes());
         if (pet.getPhotoPath() != null && !pet.getPhotoPath().isEmpty()) {
             try {
                 Bitmap bitmap = loadBitmapFromInternalStorage(pet.getPhotoPath());
                 if (bitmap != null) {
                     image.setImageBitmap(bitmap);
                 } else {
-                    image.setImageResource(pet.getPhotoRes());
+                    setImageResourceSafe(image, photoRes);
                 }
             } catch (Exception e) {
-                image.setImageResource(pet.getPhotoRes());
+                setImageResourceSafe(image, photoRes);
             }
         } else {
-            image.setImageResource(pet.getPhotoRes());
+            setImageResourceSafe(image, photoRes);
         }
 
         name.setText(pet.getName());
@@ -136,6 +138,26 @@ public class PetProfileActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
             return null;
+        }
+    }
+
+    private int resolvePhotoRes(int photoRes) {
+        if (photoRes == 0) {
+            return R.drawable.ic_pet;
+        }
+        try {
+            getResources().getResourceName(photoRes);
+            return photoRes;
+        } catch (Resources.NotFoundException e) {
+            return R.drawable.ic_pet;
+        }
+    }
+
+    private void setImageResourceSafe(ImageView imageView, int photoRes) {
+        try {
+            imageView.setImageResource(photoRes);
+        } catch (Resources.NotFoundException e) {
+            imageView.setImageResource(R.drawable.ic_pet);
         }
     }
 

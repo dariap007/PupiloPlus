@@ -18,6 +18,7 @@ import com.example.pupiloplus.R;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.ReminderViewHolder> {
     private final Context context;
@@ -122,12 +123,31 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.Remind
         holder.details.setText(reminder.getType() + " • " + petName + " • " + reminder.getDateTime());
         holder.period.setText(reminder.getPeriod());
         holder.dose.setText((CharSequence) (reminder.getNotes() != null && !reminder.getNotes().isEmpty() ? reminder.getNotes() : reminder.getDose()));
-        holder.icon.setImageResource(reminder.getImageRes());
+        holder.icon.setImageResource(getImageResForType(reminder));
         holder.itemView.setOnClickListener(v -> {
             if (listener != null) {
                 listener.onReminderClick(reminder);
             }
         });
+    }
+
+    private int getImageResForType(Reminder reminder) {
+        String type = reminder.getType();
+        if (type != null) {
+            String normalized = type.toLowerCase(Locale.getDefault());
+            if (normalized.contains("кормление")) {
+                return R.drawable.ic_food;
+            } else if (normalized.contains("визит") || normalized.contains("врач")) {
+                return R.drawable.ic_doctor;
+            } else if (normalized.contains("лотка")) {
+                return R.drawable.ic_litter;
+            } else if (normalized.contains("лекарства")) {
+                return R.drawable.ic_pill;
+            } else if (normalized.contains("вода")) {
+                return R.drawable.ic_water;
+            }
+        }
+        return reminder.getImageRes() != 0 ? reminder.getImageRes() : R.drawable.ic_bell;
     }
 
     private String getPetName(long petId) {

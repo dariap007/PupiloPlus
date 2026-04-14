@@ -2,6 +2,7 @@ package com.example.pupiloplus.data;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -21,8 +22,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String TABLE_PETS = "pets";
     private static final String TABLE_REMINDERS = "reminders";
 
+    private final Context context;
+
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        this.context = context.getApplicationContext();
     }
 
     @Override
@@ -227,12 +231,21 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         pet.setChip(cursor.getString(cursor.getColumnIndexOrThrow("chip")));
         pet.setFood(cursor.getString(cursor.getColumnIndexOrThrow("food")));
         pet.setNotes(cursor.getString(cursor.getColumnIndexOrThrow("notes")));
-        pet.setPhotoRes(cursor.getInt(cursor.getColumnIndexOrThrow("photoRes")));
-        if (pet.getPhotoRes() == 0) {
-            pet.setPhotoRes(R.drawable.ic_pet);
-        }
+        pet.setPhotoRes(resolvePhotoRes(cursor.getInt(cursor.getColumnIndexOrThrow("photoRes"))));
         pet.setPhotoPath(cursor.getString(cursor.getColumnIndexOrThrow("photoPath")));
         return pet;
+    }
+
+    private int resolvePhotoRes(int photoRes) {
+        if (photoRes == 0) {
+            return R.drawable.ic_pet;
+        }
+        try {
+            context.getResources().getResourceName(photoRes);
+            return photoRes;
+        } catch (Resources.NotFoundException e) {
+            return R.drawable.ic_pet;
+        }
     }
 
     private Reminder createReminder(Cursor cursor) {
