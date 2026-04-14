@@ -59,7 +59,7 @@
         android:layout_height="56dp"
         android:orientation="horizontal"
         android:background="@color/navBackground"
-        android:spacing="0dp"
+        android:spacing="8dp"
         android:layout_marginTop="0dp">
 
         <Button

@@ -1,5 +1,6 @@
 package com.example.pupiloplus;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -8,7 +9,7 @@ import android.widget.CompoundButton;
 import android.widget.Switch;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
+import androidx.appcompat.widget.Toolbar;
 
 import com.example.pupiloplus.notifications.NotificationHelper;
 
@@ -23,41 +24,34 @@ public class SettingsActivity extends AppCompatActivity {
         setTheme(getCurrentTheme(this));
         setContentView(R.layout.activity_settings);
 
-        Switch themeSwitch = findViewById(R.id.switch_theme);
-        Switch notifySwitch = findViewById(R.id.switch_notifications);
-        Button backButton = findViewById(R.id.button_back_settings);
-        Button testNotificationButton = findViewById(R.id.button_test_notification);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        SharedPreferences prefs = getSharedPreferences(PREFS, MODE_PRIVATE);
+        Switch notifySwitch = findViewById(R.id.switch_notifications);
+
+        SharedPreferences prefs = getSharedPreferences(PREFS, Context.MODE_PRIVATE);
         boolean darkMode = prefs.getBoolean(KEY_DARK, false);
         boolean notifications = prefs.getBoolean(KEY_NOTIFY, true);
 
-        themeSwitch.setChecked(darkMode);
         notifySwitch.setChecked(notifications);
-
-        themeSwitch.setOnCheckedChangeListener((CompoundButton buttonView, boolean isChecked) -> {
-            prefs.edit().putBoolean(KEY_DARK, isChecked).apply();
-            AppCompatDelegate.setDefaultNightMode(isChecked ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO);
-            recreate();
-        });
 
         notifySwitch.setOnCheckedChangeListener((CompoundButton buttonView, boolean isChecked) -> {
             prefs.edit().putBoolean(KEY_NOTIFY, isChecked).apply();
         });
+    }
 
-        testNotificationButton.setOnClickListener(v -> {
-            NotificationHelper notificationHelper = new NotificationHelper(this);
-            notificationHelper.createNotification("Тестовое уведомление", "Это тестовое push-уведомление для проверки работы.");
-        });
-
-        backButton.setOnClickListener(v -> {
-            startActivity(new Intent(this, MainActivity.class));
-            finish();
-        });
+    @Override
+    public boolean onOptionsItemSelected(android.view.MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     public static int getCurrentTheme(AppCompatActivity activity) {
-        SharedPreferences prefs = activity.getSharedPreferences(PREFS, MODE_PRIVATE);
+        SharedPreferences prefs = activity.getSharedPreferences(PREFS, Context.MODE_PRIVATE);
         return prefs.getBoolean(KEY_DARK, false) ? R.style.Theme_PupiloPlus_Dark : R.style.Theme_PupiloPlus;
     }
 }
