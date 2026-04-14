@@ -59,19 +59,20 @@ public class PetAdapter extends RecyclerView.Adapter<PetAdapter.PetViewHolder> {
         holder.description.setText(displayType + ", " + age);
 
         // Load pet photo
+        int photoRes = pet.getPhotoRes() != 0 ? pet.getPhotoRes() : R.drawable.ic_pet;
         if (pet.getPhotoPath() != null && !pet.getPhotoPath().isEmpty()) {
             try {
                 Bitmap bitmap = loadBitmapFromInternalStorage(pet.getPhotoPath());
                 if (bitmap != null) {
                     holder.image.setImageBitmap(bitmap);
                 } else {
-                    holder.image.setImageResource(pet.getPhotoRes());
+                    holder.image.setImageResource(photoRes);
                 }
             } catch (Exception e) {
-                holder.image.setImageResource(pet.getPhotoRes());
+                holder.image.setImageResource(photoRes);
             }
         } else {
-            holder.image.setImageResource(pet.getPhotoRes());
+            holder.image.setImageResource(photoRes);
         }
 
         holder.card.setOnClickListener(v -> listener.onPetClick(pet));

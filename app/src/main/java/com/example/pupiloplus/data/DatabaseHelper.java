@@ -6,6 +6,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.example.pupiloplus.R;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.LinkedHashSet;
@@ -226,6 +228,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         pet.setFood(cursor.getString(cursor.getColumnIndexOrThrow("food")));
         pet.setNotes(cursor.getString(cursor.getColumnIndexOrThrow("notes")));
         pet.setPhotoRes(cursor.getInt(cursor.getColumnIndexOrThrow("photoRes")));
+        if (pet.getPhotoRes() == 0) {
+            pet.setPhotoRes(R.drawable.ic_pet);
+        }
         pet.setPhotoPath(cursor.getString(cursor.getColumnIndexOrThrow("photoPath")));
         return pet;
     }
