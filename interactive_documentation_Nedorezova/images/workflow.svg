@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="500" viewBox="0 0 1200 500">
+  <rect width="1200" height="500" fill="#f4f7ff"/>
+  <g font-family="Arial" font-size="20">
+    <rect x="60" y="190" width="180" height="80" rx="18" fill="#dfe7ff"/>
+    <text x="103" y="238" fill="#1f2a37" font-weight="700">Добавить</text>
+    <text x="90" y="260" fill="#1f2a37">питомца</text>
+
+    <rect x="300" y="190" width="180" height="80" rx="18" fill="#dfe7ff"/>
+    <text x="340" y="238" fill="#1f2a37" font-weight="700">Заполнить</text>
+    <text x="330" y="260" fill="#1f2a37">данные</text>
+
+    <rect x="540" y="190" width="180" height="80" rx="18" fill="#dfe7ff"/>
+    <text x="566" y="238" fill="#1f2a37" font-weight="700">Создать</text>
+    <text x="566" y="260" fill="#1f2a37">напоминание</text>
+
+    <rect x="780" y="190" width="180" height="80" rx="18" fill="#dfe7ff"/>
+    <text x="812" y="238" fill="#1f2a37" font-weight="700">Проверить</text>
+    <text x="805" y="260" fill="#1f2a37">календарь</text>
+
+    <rect x="1020" y="190" width="120" height="80" rx="18" fill="#7a68f3"/>
+    <text x="1045" y="238" fill="#ffffff" font-weight="700">Уведомление</text>
+  </g>
+  <g stroke="#7a68f3" stroke-width="4" fill="none">
+    <path d="M240 230 H300"/>
+    <path d="M480 230 H540"/>
+    <path d="M720 230 H780"/>
+    <path d="M960 230 H1020"/>
+  </g>
+  <g fill="#7a68f3">
+    <polygon points="292,230 300,230 296,220"/>
+    <polygon points="532,230 540,230 536,220"/>
+    <polygon points="772,230 780,230 776,220"/>
+    <polygon points="1012,230 1020,230 1016,220"/>
+  </g>
+</svg>
